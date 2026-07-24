@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2f9c95">
+    <meta name="description" content="A touch-friendly target landing web game.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Target Landing">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Target Landing</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    <link rel="stylesheet" href="styles.css?v=triangle-area-stage">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">felt composition</p>
+          <h1 id="stageTitle">Target Landing</h1>
+        </div>
+        <div class="top-controls">
+          <div class="stage-switch" role="tablist" aria-label="Stage">
+            <button class="stage-button is-active" type="button" data-stage="landing" role="tab" aria-selected="true">Target landing</button>
+            <button class="stage-button" type="button" data-stage="sculpt" role="tab" aria-selected="false" aria-hidden="true" disabled hidden>Area sculpting</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="workbench" aria-label="Target landing">
+        <article class="landing-panel panel drop-zone stage-panel is-active" data-zone="landing" data-stage-panel="landing">
+          <div class="panel-head">
+            <div>
+              <h2>Landing</h2>
+              <p class="level-title" id="levelTitle">Big then small</p>
+            </div>
+          </div>
+
+          <div class="landing-state landing-state-rich" aria-live="polite">
+            <span id="landingMessage">near the start</span>
+            <button class="next-button" id="nextLevel" type="button" hidden>Next</button>
+          </div>
+
+          <div class="reflection-card is-empty" id="reflectionCard" aria-live="polite">
+            <div>
+              <p class="reflection-kicker" id="reflectionKicker">rule</p>
+              <p class="reflection-text" id="reflectionText"></p>
+            </div>
+          </div>
+
+          <div class="target-stage">
+            <div class="target-glow" aria-hidden="true"></div>
+            <div class="runway" aria-hidden="true">
+              <div class="runway-grain"></div>
+              <div class="start-pad"></div>
+              <div class="target-band"></div>
+              <div class="target-band target-band-secondary"></div>
+              <div class="mirror-flip" id="mirrorFlip"></div>
+              <div class="runway-label start-label" id="startLabel">start</div>
+              <div class="runway-label target-label" id="targetLabel">target</div>
+              <div class="number-hud" id="numberHud" hidden>
+                <div class="target-number-card">
+                  <span>T</span>
+                  <strong id="targetNumber">0</strong>
+                </div>
+              </div>
+              <div class="ghost-marker" id="ghostMarker"></div>
+              <div class="marker" id="marker">
+                <span></span>
+              </div>
+            </div>
+            <div class="trace" id="trace" aria-hidden="true"></div>
+            <div class="load-card" id="loadCard" hidden>
+              <div class="load-row">
+                <span id="loadLabel">loading piece</span>
+                <span id="loadTime"></span>
+              </div>
+              <div class="load-track">
+                <div class="load-fill" id="loadFill"></div>
+              </div>
+            </div>
+          </div>
+
+        </article>
+
+        <article class="sculpt-panel panel drop-zone stage-panel" data-zone="sculpt" data-stage-panel="sculpt" aria-hidden="true" inert hidden>
+          <div class="panel-head">
+            <h2>Area Sculpting</h2>
+            <div class="panel-actions">
+              <div class="chip-bowl" id="chipBowl" aria-hidden="true"></div>
+              <button class="icon-button" type="button" data-action="reset" title="Reset">
+                <span aria-hidden="true">&#8634;</span>
+                <span class="sr-only">Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sculpt-stage">
+            <svg class="goal-shape" viewBox="0 0 560 300" role="img" aria-label="13 by 4 triangle area territory">
+              <defs>
+                <clipPath id="triangleTerritory">
+                  <path d="M58 222 L500 222 L58 86 Z"></path>
+                </clipPath>
+                <filter id="paperLift" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#1d2a2d" flood-opacity=".14"></feDropShadow>
+                </filter>
+              </defs>
+              <path class="goal-outline" d="M58 222 L500 222 L58 86 Z"></path>
+              <g clip-path="url(#triangleTerritory)" filter="url(#paperLift)">
+                <rect class="paper-base" x="58" y="86" width="442" height="136"></rect>
+                <g id="areaPieces"></g>
+                <g id="cutPieces"></g>
+              </g>
+              <g class="triangle-grid" aria-hidden="true">
+                <path d="M58 188 L500 188"></path>
+                <path d="M58 154 L500 154"></path>
+                <path d="M58 120 L500 120"></path>
+                <path d="M92 86 L92 222"></path>
+                <path d="M126 86 L126 222"></path>
+                <path d="M160 86 L160 222"></path>
+                <path d="M194 86 L194 222"></path>
+                <path d="M228 86 L228 222"></path>
+                <path d="M262 86 L262 222"></path>
+                <path d="M296 86 L296 222"></path>
+                <path d="M330 86 L330 222"></path>
+                <path d="M364 86 L364 222"></path>
+                <path d="M398 86 L398 222"></path>
+                <path d="M432 86 L432 222"></path>
+                <path d="M466 86 L466 222"></path>
+              </g>
+              <path class="goal-edge" d="M58 222 L500 222 L58 86 Z"></path>
+              <text class="shape-measure shape-measure-base" x="279" y="250">13</text>
+              <text class="shape-measure shape-measure-height" x="34" y="158">4</text>
+            </svg>
+          </div>
+
+          <div class="sculpt-state" aria-live="polite">
+            <span id="sculptMessage">empty surface</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="control-dock" aria-label="Piece controls">
+        <div class="mode-switch" role="group" aria-label="Mode">
+          <button class="mode-button is-active" type="button" data-mode="add" title="Add">
+            <span aria-hidden="true">+</span>
+            <span class="sr-only">Add</span>
+          </button>
+          <button class="mode-button" type="button" data-mode="subtract" title="Subtract">
+            <span aria-hidden="true">-</span>
+            <span class="sr-only">Subtract</span>
+          </button>
+        </div>
+        <div class="reflection-actions control-reflection-actions" id="reflectionActions" hidden>
+          <button class="secondary-button" id="tryAnother" type="button" hidden>Find another route</button>
+          <button class="secondary-button" id="preferFirst" type="button" hidden>First route</button>
+          <button class="secondary-button" id="preferSecond" type="button" hidden>Second route</button>
+        </div>
+        <div class="level-dock">
+          <button class="icon-button" type="button" data-action="reset" title="Reset">
+            <span aria-hidden="true">&#8634;</span>
+            <span class="sr-only">Reset</span>
+          </button>
+          <div class="tray-level-controls" aria-label="Level controls">
+            <button class="icon-button" type="button" data-level-step="-1" title="Previous level">
+              <span aria-hidden="true">&#8592;</span>
+              <span class="sr-only">Previous level</span>
+            </button>
+            <div class="level-count" id="levelCount">1 / 14</div>
+            <button class="icon-button" type="button" data-level-step="1" title="Next level">
+              <span aria-hidden="true">&#8594;</span>
+              <span class="sr-only">Next level</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="piece-tray" aria-label="Pieces">
+        <button class="piece piece-large" type="button" data-piece="large">
+          <span class="piece-swatch"><span class="piece-value" data-value-for="large"></span></span>
+          <span class="piece-name">large</span>
+          <span class="piece-count" data-count-for="large"></span>
+        </button>
+        <button class="piece piece-small" type="button" data-piece="small">
+          <span class="piece-swatch"><span class="piece-value" data-value-for="small"></span></span>
+          <span class="piece-name">small</span>
+          <span class="piece-count" data-count-for="small"></span>
+        </button>
+        <button class="piece piece-huge" type="button" data-piece="huge">
+          <span class="piece-swatch"><span class="piece-value" data-value-for="huge"></span></span>
+          <span class="piece-name">very large</span>
+          <span class="piece-count" data-count-for="huge"></span>
+        </button>
+        <button class="piece piece-tiny" type="button" data-piece="tiny">
+          <span class="piece-swatch"><span class="piece-value" data-value-for="tiny"></span></span>
+          <span class="piece-name">very small</span>
+          <span class="piece-count" data-count-for="tiny"></span>
+        </button>
+      </aside>
+    </main>
+
+    <script src="app.js?v=triangle-area-stage"></script>
+  </body>
+</html>
