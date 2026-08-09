@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="stylesheet" href="styles.css?v=triangle-area-stage">
+    <link rel="stylesheet" href="styles.css?v=vertical-controls-2x2">
   </head>
   <body>
     <main class="app-shell">
@@ -23,6 +23,11 @@
           <h1 id="stageTitle">Target Landing</h1>
         </div>
         <div class="top-controls">
+          <div class="view-switch" role="group" aria-label="Runway options">
+            <button class="view-button is-active" id="horizontalView" type="button" aria-pressed="true">Horizontal</button>
+            <button class="view-button" id="verticalView" type="button" aria-pressed="false">Vertical</button>
+            <button class="view-button numbers-button" id="numbersToggle" type="button" aria-pressed="true" hidden>Numbers on</button>
+          </div>
           <div class="stage-switch" role="tablist" aria-label="Stage">
             <button class="stage-button is-active" type="button" data-stage="landing" role="tab" aria-selected="true">Target landing</button>
             <button class="stage-button" type="button" data-stage="sculpt" role="tab" aria-selected="false" aria-hidden="true" disabled hidden>Area sculpting</button>
@@ -67,19 +72,10 @@
                   <strong id="targetNumber">0</strong>
                 </div>
               </div>
+              <div class="trace" id="trace" aria-hidden="true"></div>
               <div class="ghost-marker" id="ghostMarker"></div>
               <div class="marker" id="marker">
                 <span></span>
-              </div>
-            </div>
-            <div class="trace" id="trace" aria-hidden="true"></div>
-            <div class="load-card" id="loadCard" hidden>
-              <div class="load-row">
-                <span id="loadLabel">loading piece</span>
-                <span id="loadTime"></span>
-              </div>
-              <div class="load-track">
-                <div class="load-fill" id="loadFill"></div>
               </div>
             </div>
           </div>
@@ -202,6 +198,7 @@
       </aside>
     </main>
 
-    <script src="app.js?v=triangle-area-stage"></script>
+    <script src="app.js?v=vertical-controls-2x2"></script>
   </body>
 </html>
+
