@@ -45,6 +45,12 @@ button {
   padding: 22px;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: ease-in-out;
+}
+
 .topbar {
   display: flex;
   align-items: center;
@@ -169,6 +175,32 @@ h2 {
   align-self: start;
   gap: 18px;
   min-height: 0;
+}
+
+.view-switch {
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .78);
+}
+
+.view-button {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.view-button.is-active,
+.view-button[aria-pressed="false"].numbers-button {
+  color: #fff;
+  background: var(--teal-deep);
 }
 
 .panel {
@@ -444,6 +476,7 @@ h2 {
   border: 3px solid rgba(31, 37, 37, .28);
   opacity: 0;
   transition: left .28s ease, opacity .2s ease, transform .2s ease;
+  z-index: 3;
 }
 
 .ghost-marker.is-visible {
@@ -462,6 +495,7 @@ h2 {
   background: var(--coral);
   box-shadow: 0 9px 22px rgba(238, 111, 87, .35);
   transition: left .42s cubic-bezier(.2, .9, .2, 1), background .22s ease;
+  z-index: 4;
 }
 
 .marker span {
@@ -476,10 +510,8 @@ h2 {
 }
 
 .trace {
-  position: relative;
-  width: min(100%, 980px);
-  height: 28px;
-  margin-top: 8px;
+  position: absolute;
+  inset: 0;
   pointer-events: none;
 }
 
@@ -527,80 +559,25 @@ h2 {
   line-height: 1.1;
 }
 
-.load-card {
-  position: absolute;
-  left: 50%;
-  bottom: 24px;
-  width: min(460px, calc(100% - 52px));
-  padding: 12px;
-  border: 1px solid rgba(31, 37, 37, .13);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, .92);
-  box-shadow: 0 12px 28px rgba(31, 37, 37, .12);
-  transform: translateX(-50%);
-}
-
-.load-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 8px;
-  color: var(--muted);
-  font-size: .82rem;
-  font-weight: 900;
-}
-
-.load-track {
-  height: 12px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: #e4ebe6;
-}
-
-.load-fill {
-  width: 0%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--teal), var(--gold));
-  transition: width .08s linear;
+.numbers-button[hidden] {
+  display: block;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .trace-step {
   position: absolute;
-  bottom: 0;
-  height: 8px;
-  border-radius: 999px;
-  transform-origin: left center;
-  opacity: .82;
-}
-
-.trace-step::after {
-  content: "";
-  position: absolute;
-  right: -6px;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: inherit;
+  z-index: 2;
+  border: 1px solid rgba(31, 37, 37, .2);
+  border-radius: 7px;
+  box-shadow: inset 0 -7px 0 rgba(0, 0, 0, .12), 0 6px 12px rgba(31, 37, 37, .14);
   transform: translateY(-50%);
+  opacity: .94;
 }
 
-.trace-step.is-current::after {
-  width: 16px;
-  height: 16px;
-  background: var(--coral);
-  box-shadow: 0 0 0 4px rgba(238, 111, 87, .18);
-}
-
-.trace-step.backward {
-  transform-origin: right center;
-}
-
-.trace-step.backward::after {
-  left: -6px;
-  right: auto;
+.trace-step.live-block {
+  overflow: hidden;
+  filter: saturate(1.08);
 }
 
 .trace-label {
@@ -634,6 +611,42 @@ h2 {
   justify-content: space-between;
   gap: 14px;
 }
+
+.target-stage.is-vertical {
+  min-height: min(72vh, 720px);
+}
+
+.target-stage.is-vertical .runway {
+  width: min(72vw, 300px);
+  height: min(64vh, 620px);
+}
+
+.target-stage.is-vertical .runway-grain {
+  background-image: linear-gradient(0deg, rgba(31, 37, 37, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.52), transparent);
+  background-size: 100% 48px, 100% 100%;
+}
+
+.target-stage.is-vertical .target-band {
+  left: 0;
+  right: 0;
+  top: calc(100% - var(--target-top, 68%));
+  bottom: auto;
+  width: auto;
+  height: var(--target-height, 6%);
+  border: 0;
+  border-top: 2px solid rgba(230, 184, 75, .82);
+  border-bottom: 2px solid rgba(230, 184, 75, .82);
+  background: linear-gradient(0deg, rgba(230,184,75,.12), rgba(230,184,75,.72), rgba(230,184,75,.12));
+}
+
+.target-stage.is-vertical .target-band-secondary { display: none; }
+.target-stage.is-vertical .start-pad { left: 18%; right: 18%; top: auto; bottom: calc(var(--start-position, 8%) - 4%); width: auto; height: 8%; }
+.target-stage.is-vertical .runway-label { left: 12px; transform: none; }
+.target-stage.is-vertical .start-label { top: auto; bottom: var(--start-position, 8%); }
+.target-stage.is-vertical .target-label { top: calc(100% - var(--target-center, 65%)); }
+.target-stage.is-vertical .target-number-card { left: auto; right: 10px; top: calc(100% - var(--target-center, 65%)); transform: translateY(-50%); }
+.target-stage.is-vertical .trace-step { transform: translateX(-50%); }
+.target-stage.is-vertical .trace-label { left: calc(100% + 8px); bottom: auto; top: 50%; transform: translateY(-50%); }
 
 .landing-state {
   min-height: 54px;
@@ -791,6 +804,48 @@ h2 {
   gap: 10px;
 }
 
+@media (min-width: 881px) {
+  .layout-vertical .app-shell {
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 520px);
+    grid-template-rows: auto auto 1fr;
+    align-items: start;
+  }
+
+  .layout-vertical .topbar {
+    grid-column: 1 / -1;
+  }
+
+  .layout-vertical .workbench {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+  }
+
+  .layout-vertical .control-dock {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    padding: 8px 10px;
+    border: 1px solid rgba(96, 112, 108, .18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .7);
+  }
+
+  .layout-vertical .piece-tray {
+    grid-column: 2;
+    grid-row: 3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    padding: 10px;
+    border: 1px solid rgba(96, 112, 108, .18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .52);
+  }
+
+  .layout-vertical .piece {
+    min-height: 142px;
+  }
+}
+
 .piece {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -865,10 +920,30 @@ h2 {
   display: grid;
   place-items: center;
   height: 46px;
+  border: 2px solid rgba(31, 37, 37, .42);
   border-radius: 8px;
+  opacity: .32;
   pointer-events: none;
-  box-shadow: 0 16px 28px rgba(31, 37, 37, .18);
-  transform: translate(-50%, -50%);
+  box-shadow: inset 0 -7px 0 rgba(0, 0, 0, .14), 0 12px 24px rgba(31, 37, 37, .18);
+  transform: none;
+}
+
+.drag-proxy::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-top: 3px solid rgba(31, 37, 37, .8);
+  border-right: 3px solid rgba(31, 37, 37, .8);
+}
+
+.drag-proxy.drag-right::after { right: 8px; top: 50%; transform: translateY(-50%) rotate(45deg); }
+.drag-proxy.drag-left::after { left: 8px; top: 50%; transform: translateY(-50%) rotate(-135deg); }
+.drag-proxy.drag-up::after { left: 50%; top: 8px; transform: translateX(-50%) rotate(-45deg); }
+.drag-proxy.drag-down::after { left: 50%; bottom: 8px; transform: translateX(-50%) rotate(135deg); }
+
+.drag-proxy:not(.drag-right):not(.drag-left):not(.drag-up):not(.drag-down)::after {
+  display: none;
 }
 
 .piece:focus-visible,
@@ -908,6 +983,17 @@ h2 {
   width: 104px;
   background: #7e858b;
 }
+
+.layout-vertical .piece-swatch {
+  width: 30px;
+  max-width: none;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, .1);
+}
+
+.layout-vertical .piece-tiny .piece-swatch { width: 30px; height: 28px; }
+.layout-vertical .piece-small .piece-swatch { width: 30px; height: 42px; }
+.layout-vertical .piece-large .piece-swatch { width: 30px; height: 84px; }
+.layout-vertical .piece-huge .piece-swatch { width: 30px; height: 104px; }
 
 body:has(.stage-button[data-stage="sculpt"].is-active) .piece-large .piece-swatch {
   width: 88px;
@@ -952,6 +1038,8 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     align-items: stretch;
   }
 
+  .view-switch { flex-wrap: wrap; }
+
   .control-dock {
     justify-content: space-between;
   }
@@ -971,6 +1059,14 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
 
   .piece-tray {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .layout-vertical .piece-tray {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .layout-vertical .piece {
+    min-height: 132px;
   }
 
   .reflection-card {
@@ -1020,3 +1116,4 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     max-width: 36vw;
   }
 }
+
