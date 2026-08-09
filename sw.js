@@ -1,9 +1,9 @@
-const CACHE_NAME = "target-landing-pwa-v1";
+const CACHE_NAME = "target-landing-pwa-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=fixed-rule-space",
-  "./app.js?v=fixed-rule-space",
+  "./styles.css?v=vertical-controls-2x2",
+  "./app.js?v=vertical-controls-2x2",
   "./manifest.webmanifest",
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",
@@ -39,3 +39,4 @@ self.addEventListener("fetch", (event) => {
     ))
   );
 });
+
