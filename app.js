@@ -221,7 +221,9 @@ const state = {
   secondRoute: null,
   routeChoice: null,
   sculptCoverage: 0,
-  history: []
+  history: [],
+  orientation: "horizontal",
+  showNumbers: true
 };
 
 const marker = document.querySelector("#marker");
@@ -235,12 +237,11 @@ const sculptMessage = document.querySelector("#sculptMessage");
 const stageTitle = document.querySelector("#stageTitle");
 const levelTitle = document.querySelector("#levelTitle");
 const levelCount = document.querySelector("#levelCount");
-const loadCard = document.querySelector("#loadCard");
-const loadLabel = document.querySelector("#loadLabel");
-const loadTime = document.querySelector("#loadTime");
-const loadFill = document.querySelector("#loadFill");
 const numberHud = document.querySelector("#numberHud");
 const targetNumber = document.querySelector("#targetNumber");
+const horizontalView = document.querySelector("#horizontalView");
+const verticalView = document.querySelector("#verticalView");
+const numbersToggle = document.querySelector("#numbersToggle");
 const startLabel = document.querySelector("#startLabel");
 const targetLabel = document.querySelector("#targetLabel");
 const nextLevel = document.querySelector("#nextLevel");
@@ -259,6 +260,40 @@ const pieceButtons = document.querySelectorAll(".piece");
 const dropZones = document.querySelectorAll(".drop-zone");
 let drag = null;
 let suppressNextClick = false;
+
+horizontalView.addEventListener("click", () => setOrientation("horizontal"));
+verticalView.addEventListener("click", () => setOrientation("vertical"));
+numbersToggle.addEventListener("click", () => {
+  state.showNumbers = !state.showNumbers;
+  numbersToggle.setAttribute("aria-pressed", String(state.showNumbers));
+  numbersToggle.textContent = state.showNumbers ? "Numbers on" : "Numbers off";
+  renderNumbers();
+  renderTrace();
+  updatePieceAvailability();
+});
+
+function setOrientation(orientation) {
+  if (orientation === state.orientation) return;
+
+  const updateLayout = () => {
+    state.orientation = orientation;
+    document.body.classList.toggle("layout-vertical", orientation === "vertical");
+    document.body.classList.toggle("layout-horizontal", orientation === "horizontal");
+    document.querySelector(".target-stage").classList.toggle("is-vertical", orientation === "vertical");
+    horizontalView.classList.toggle("is-active", orientation === "horizontal");
+    verticalView.classList.toggle("is-active", orientation === "vertical");
+    horizontalView.setAttribute("aria-pressed", String(orientation === "horizontal"));
+    verticalView.setAttribute("aria-pressed", String(orientation === "vertical"));
+    renderTargetBand();
+    render();
+  };
+
+  if (document.startViewTransition) {
+    document.startViewTransition(updateLayout);
+  } else {
+    updateLayout();
+  }
+}
 
 modeButtons.forEach((button) => {
   button.addEventListener("click", () => setMode(button.dataset.mode));
@@ -363,7 +398,8 @@ async function landPiece(key) {
   let travel = moveValue * (level.stepScale || 1);
   const previous = state.position;
   const moveNumber = state.moveCount + 1;
-  const duration = moveNumber === 1 ? 0 : moveNumber * 2000 * piece.loadWeight;
+  const duration = moveNumber === 1 ? 650 : moveNumber * 1400 * piece.loadWeight;
+  const destination = clamp(state.position + travel * direction, 0, 100);
   const token = state.loadToken + 1;
 
   state.loadToken = token;
@@ -371,11 +407,11 @@ async function landPiece(key) {
   state.loading = true;
   updatePieceAvailability();
   if (duration > 0) {
-    await runLoad(piece, moveNumber, duration);
+    await runLoad(piece, moveNumber, duration, previous, destination, direction);
     if (token !== state.loadToken) return;
   }
 
-  state.position = clamp(state.position + travel * direction, 0, 100);
+  state.position = destination;
 
   state.history.push({
     from: previous,
@@ -415,28 +451,25 @@ function consumeLandingPiece(key) {
   state.inventory[key] = Math.max(0, (state.inventory[key] || 0) - 1);
 }
 
-function runLoad(piece, moveNumber, duration) {
-  loadLabel.textContent = moveNumber === 1 ? `${piece.name} goes now` : `loading ${piece.name}`;
-  loadTime.textContent = moveNumber === 1 ? "instant" : `move ${moveNumber}`;
-  loadFill.style.width = "0%";
+function runLoad(piece, moveNumber, duration, from, to, direction) {
+  const liveBlock = document.createElement("span");
+  liveBlock.className = `trace-step live-block ${direction < 0 ? "backward" : "forward"}`;
+  liveBlock.style.background = piece.color;
+  trace.append(liveBlock);
 
-  if (duration === 0) {
-    loadCard.hidden = true;
-    return Promise.resolve();
-  }
-
-  loadCard.hidden = false;
   const start = performance.now();
 
   return new Promise((resolve) => {
     function tick(now) {
       const progress = clamp((now - start) / duration, 0, 1);
-      loadFill.style.width = `${progress * 100}%`;
+      const current = from + (to - from) * progress;
+      setAxisPosition(marker, current);
+      setBlockGeometry(liveBlock, from, current);
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
         window.setTimeout(() => {
-          loadCard.hidden = true;
+          liveBlock.remove();
           resolve();
         }, 120);
       }
@@ -470,7 +503,7 @@ function sculptPiece(key, point) {
 }
 
 function previewLanding(position) {
-  ghostMarker.style.left = `${position}%`;
+  setAxisPosition(ghostMarker, position);
   ghostMarker.classList.add("is-visible");
   window.clearTimeout(previewLanding.timeout);
   previewLanding.timeout = window.setTimeout(() => {
@@ -509,11 +542,14 @@ function resetLandingAttempt(keepFirstRoute, newTarget) {
   state.inventory = { ...level.inventory };
   state.lastLandingPiece = null;
   state.history = [];
-  loadCard.hidden = true;
   nextLevel.hidden = true;
   hideReflection();
   levelTitle.textContent = level.title;
   levelCount.textContent = `${state.levelIndex + 1} / ${landingLevels.length}`;
+  numbersToggle.hidden = state.levelIndex !== landingLevels.length - 1;
+  if (numbersToggle.hidden) state.showNumbers = true;
+  numbersToggle.setAttribute("aria-pressed", String(state.showNumbers));
+  numbersToggle.textContent = state.showNumbers ? "Numbers on" : "Numbers off";
   renderTargetBand();
   render();
   updateModeAvailability();
@@ -589,6 +625,10 @@ function renderTargetBand() {
   runway.style.setProperty("--target-width-2", `${secondary ? secondary[1] - secondary[0] : 0}%`);
   runway.style.setProperty("--target-secondary-opacity", secondary ? 1 : 0);
   runway.style.setProperty("--mirror-width", `${mirrorWidth}%`);
+  runway.style.setProperty("--start-position", `${level.start}%`);
+  runway.style.setProperty("--target-top", `${primary[1]}%`);
+  runway.style.setProperty("--target-height", `${primary[1] - primary[0]}%`);
+  runway.style.setProperty("--target-center", `${primary[0] + (primary[1] - primary[0]) / 2}%`);
 }
 
 function landingTargetRanges() {
@@ -801,7 +841,7 @@ function addChip(key) {
 }
 
 function render() {
-  marker.style.left = `${state.position}%`;
+  setAxisPosition(marker, state.position);
   marker.classList.toggle("is-inside", isInLandingTarget(state.position));
   renderTrace();
   renderNumbers();
@@ -815,10 +855,9 @@ function renderTrace() {
     const width = Math.max(4, Math.abs(move.to - move.from));
     const step = document.createElement("span");
     step.className = `trace-step ${move.direction < 0 ? "backward" : "forward"} ${index === state.history.length - 1 ? "is-current" : ""}`;
-    step.style.left = `${left}%`;
-    step.style.width = `${width}%`;
+    setBlockGeometry(step, move.from, move.to);
     step.style.background = move.color;
-    if (landingLevels[state.levelIndex].numeric) {
+    if (landingLevels[state.levelIndex].numeric && state.showNumbers) {
       const label = document.createElement("span");
       label.className = "trace-label";
       label.textContent = formatSigned(move.value * move.direction);
@@ -830,7 +869,7 @@ function renderTrace() {
 
 function renderNumbers() {
   const level = landingLevels[state.levelIndex];
-  numberHud.hidden = !level.numeric;
+  numberHud.hidden = !level.numeric || !state.showNumbers;
   if (!level.numeric) return;
 
   targetNumber.textContent = formatSigned(targetOffset(level));
@@ -891,7 +930,7 @@ function updatePieceAvailability() {
       button.classList.toggle("is-unavailable", button.disabled && belongsToLevel);
       button.classList.toggle("is-not-in-level", !belongsToLevel);
       if (countBadge) countBadge.textContent = belongsToLevel ? String(count) : "no";
-      if (valueBadge) valueBadge.textContent = level.numeric && belongsToLevel ? formatNumber(level.steps?.[key] || pieces[key].step) : "";
+      if (valueBadge) valueBadge.textContent = level.numeric && state.showNumbers && belongsToLevel ? formatNumber(level.steps?.[key] || pieces[key].step) : "";
     } else {
       const belongsToSculpt = Object.prototype.hasOwnProperty.call(sculptPieces, key);
       button.hidden = !belongsToSculpt;
@@ -902,6 +941,32 @@ function updatePieceAvailability() {
       if (valueBadge) valueBadge.textContent = belongsToSculpt ? `${sculptPieces[key].unitsWide}x${sculptPieces[key].unitsHigh}` : "";
     }
   });
+}
+
+function setAxisPosition(element, position) {
+  if (state.orientation === "vertical") {
+    element.style.left = "50%";
+    element.style.top = `${100 - position}%`;
+  } else {
+    element.style.left = `${position}%`;
+    element.style.top = "62%";
+  }
+}
+
+function setBlockGeometry(element, from, to) {
+  const start = Math.min(from, to);
+  const length = Math.max(1.2, Math.abs(to - from));
+  if (state.orientation === "vertical") {
+    element.style.left = "50%";
+    element.style.top = `${100 - Math.max(from, to)}%`;
+    element.style.width = "54px";
+    element.style.height = `${length}%`;
+  } else {
+    element.style.left = `${start}%`;
+    element.style.top = "62%";
+    element.style.width = `${length}%`;
+    element.style.height = "36px";
+  }
 }
 
 function updatePieceLabels() {
@@ -958,12 +1023,13 @@ function startDrag(event, button) {
     startX: event.clientX,
     startY: event.clientY,
     moved: false,
+    visual: piece,
     proxy: document.createElement("div")
   };
   button.classList.add("is-dragging");
-  drag.proxy.className = "drag-proxy";
-  drag.proxy.style.width = `${Math.max(34, piece.width * 0.82)}px`;
-  drag.proxy.style.height = `${Math.max(32, piece.height * 0.82)}px`;
+  drag.proxy.className = `drag-proxy ${piece.directionClass || ""}`;
+  drag.proxy.style.width = `${piece.width}px`;
+  drag.proxy.style.height = `${piece.height}px`;
   drag.proxy.style.background = piece.color;
   document.body.append(drag.proxy);
   if (!isMouse && button.setPointerCapture) button.setPointerCapture(event.pointerId);
@@ -982,20 +1048,62 @@ function dragVisualPiece(key) {
     };
   }
 
-  return pieces[key];
+  const runwayBox = document.querySelector(".runway").getBoundingClientRect();
+  const level = landingLevels[state.levelIndex];
+  const moveValue = (level.steps?.[key] || pieces[key].step) * (level.stepScale || 1);
+  const direction = state.mode === "subtract" ? -1 : 1;
+  const destination = clamp(state.position + moveValue * direction, 0, 100);
+  const span = Math.max(1.2, Math.abs(destination - state.position));
+
+  if (state.orientation === "vertical") {
+    return {
+      width: 54,
+      height: Math.max(18, runwayBox.height * span / 100),
+      color: pieces[key].color,
+      axis: "vertical",
+      direction,
+      directionClass: direction > 0 ? "drag-up" : "drag-down"
+    };
+  }
+
+  return {
+    width: Math.max(18, runwayBox.width * span / 100),
+    height: 36,
+    color: pieces[key].color,
+    axis: "horizontal",
+    direction,
+    directionClass: direction > 0 ? "drag-right" : "drag-left"
+  };
 }
 
 function moveDrag(event) {
   if (!drag) return;
   const travel = Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY);
   drag.moved = drag.moved || travel > 6;
-  drag.proxy.style.left = `${event.clientX}px`;
-  drag.proxy.style.top = `${event.clientY}px`;
+  positionDragProxy(event.clientX, event.clientY);
   dropZones.forEach((zone) => {
     const box = zone.getBoundingClientRect();
     const inside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
     zone.classList.toggle("is-hovered", inside && drag.moved);
   });
+}
+
+function positionDragProxy(x, y) {
+  const visual = drag.visual;
+  if (!visual.axis) {
+    drag.proxy.style.left = `${x - visual.width / 2}px`;
+    drag.proxy.style.top = `${y - visual.height / 2}px`;
+    return;
+  }
+
+  if (visual.axis === "horizontal") {
+    drag.proxy.style.left = `${visual.direction > 0 ? x : x - visual.width}px`;
+    drag.proxy.style.top = `${y - visual.height / 2}px`;
+    return;
+  }
+
+  drag.proxy.style.left = `${x - visual.width / 2}px`;
+  drag.proxy.style.top = `${visual.direction > 0 ? y - visual.height : y}px`;
 }
 
 function endDrag(event) {
@@ -1032,3 +1140,4 @@ if ("serviceWorker" in navigator) {
     });
   });
 }
+
