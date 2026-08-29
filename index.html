@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="stylesheet" href="styles.css?v=centered-control-cluster">
+    <link rel="stylesheet" href="styles.css?v=stage-switch-default-14">
   </head>
   <body>
     <main class="app-shell">
@@ -28,7 +28,7 @@
             <button class="view-button" id="verticalView" type="button" aria-pressed="false">Vertical</button>
             <button class="view-button numbers-button" id="numbersToggle" type="button" aria-pressed="true" hidden>Numbers on</button>
           </div>
-          <button class="final-stage-button" id="jumpFinalStage" type="button">Stage 14</button>
+          <button class="final-stage-button" id="jumpFinalStage" type="button" aria-label="Jump to stage 1">Stage 1</button>
           <div class="stage-switch" role="tablist" aria-label="Stage">
             <button class="stage-button is-active" type="button" data-stage="landing" role="tab" aria-selected="true">Target landing</button>
             <button class="stage-button" type="button" data-stage="sculpt" role="tab" aria-selected="false" aria-hidden="true" disabled hidden>Area sculpting</button>
@@ -41,7 +41,7 @@
           <div class="panel-head">
             <div>
               <h2>Landing</h2>
-              <p class="level-title" id="levelTitle">Big then small</p>
+              <p class="level-title" id="levelTitle">Wide random challenge</p>
             </div>
           </div>
 
@@ -166,7 +166,7 @@
               <span aria-hidden="true">&#8592;</span>
               <span class="sr-only">Previous level</span>
             </button>
-            <div class="level-count" id="levelCount">1 / 14</div>
+            <div class="level-count" id="levelCount">14 / 14</div>
             <button class="icon-button" type="button" data-level-step="1" title="Next level">
               <span aria-hidden="true">&#8594;</span>
               <span class="sr-only">Next level</span>
@@ -199,7 +199,7 @@
       </aside>
     </main>
 
-    <script src="app.js?v=centered-control-cluster"></script>
+    <script src="app.js?v=stage-switch-default-14"></script>
   </body>
 </html>
 
