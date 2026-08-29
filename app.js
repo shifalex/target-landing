@@ -209,7 +209,7 @@ const landingLevels = [
 const state = {
   stage: "landing",
   mode: "add",
-  levelIndex: 0,
+  levelIndex: landingLevels.length - 1,
   position: 8,
   moveCount: 0,
   loading: false,
@@ -274,7 +274,7 @@ numbersToggle.addEventListener("click", () => {
 });
 
 jumpFinalStage.addEventListener("click", () => {
-  state.levelIndex = landingLevels.length - 1;
+  state.levelIndex = state.levelIndex >= landingLevels.length - 2 ? 0 : landingLevels.length - 1;
   setStage("landing");
   resetLandingLevel(true);
 });
@@ -553,6 +553,9 @@ function resetLandingAttempt(keepFirstRoute, newTarget) {
   hideReflection();
   levelTitle.textContent = level.title;
   levelCount.textContent = `${state.levelIndex + 1} / ${landingLevels.length}`;
+  const shortcutStage = state.levelIndex >= landingLevels.length - 2 ? 1 : landingLevels.length;
+  jumpFinalStage.textContent = `Stage ${shortcutStage}`;
+  jumpFinalStage.setAttribute("aria-label", `Jump to stage ${shortcutStage}`);
   numbersToggle.hidden = state.levelIndex !== landingLevels.length - 1;
   if (numbersToggle.hidden) state.showNumbers = true;
   numbersToggle.setAttribute("aria-pressed", String(state.showNumbers));
