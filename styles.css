@@ -254,6 +254,38 @@ h2 {
   margin: -6px 0 -8px;
 }
 
+.block-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  order: 1;
+}
+
+.control-reflection-actions { order: 2; }
+
+.level-dock { order: 3; }
+
+.layout-vertical .control-dock {
+  align-items: center;
+  flex-direction: column;
+  gap: 0;
+}
+
+.layout-vertical .level-dock { order: 1; }
+
+.layout-vertical .control-reflection-actions {
+  order: 2;
+  margin-top: 10px;
+}
+
+.layout-vertical .block-controls {
+  order: 3;
+  margin-top: 22px;
+}
+
+.layout-vertical .piece-tray { margin-top: -10px; }
+
 .level-dock {
   display: flex;
   align-items: center;
@@ -885,6 +917,21 @@ h2 {
     border: 1px solid rgba(96, 112, 108, .18);
     border-radius: 8px;
     background: rgba(255, 255, 255, .7);
+    align-items: center;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .layout-vertical .level-dock { order: 1; }
+
+  .layout-vertical .control-reflection-actions {
+    order: 2;
+    margin-top: 10px;
+  }
+
+  .layout-vertical .block-controls {
+    order: 3;
+    margin-top: 22px;
   }
 
   .layout-vertical .piece-tray {
@@ -896,6 +943,7 @@ h2 {
     border: 1px solid rgba(96, 112, 108, .18);
     border-radius: 8px;
     background: rgba(255, 255, 255, .52);
+    margin-top: -10px;
   }
 
   .layout-vertical .piece {
@@ -1164,6 +1212,21 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   .mode-switch {
     width: 100%;
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .layout-vertical .mode-switch {
+    width: min(180px, 100%);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .layout-vertical .block-controls {
+    align-self: center;
+    flex-direction: column;
+    width: min(220px, 100%);
+  }
+
+  .layout-vertical .level-dock {
+    align-self: center;
   }
 
   .tray-level-controls {
