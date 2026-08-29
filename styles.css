@@ -59,9 +59,14 @@ button {
 }
 
 .top-controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "orientation stage"
+    "numbers jump";
   align-items: center;
-  gap: 12px;
+  justify-content: end;
+  gap: 8px;
 }
 
 .eyebrow {
@@ -112,7 +117,9 @@ h2 {
 
 .stage-switch {
   display: grid;
-  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  grid-area: stage;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(130px, 1fr);
   gap: 6px;
   padding: 6px;
   border: 1px solid var(--line);
@@ -178,6 +185,7 @@ h2 {
 }
 
 .view-switch {
+  grid-area: orientation;
   display: flex;
   gap: 5px;
   padding: 5px;
@@ -197,6 +205,14 @@ h2 {
   cursor: pointer;
 }
 
+.numbers-button {
+  grid-area: numbers;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .82);
+  box-shadow: 0 8px 24px rgba(31, 37, 37, .08);
+}
+
 .view-button.is-active,
 .view-button[aria-pressed="false"].numbers-button {
   color: #fff;
@@ -204,6 +220,8 @@ h2 {
 }
 
 .final-stage-button {
+  grid-area: jump;
+  width: 132px;
   min-height: 48px;
   padding: 0 16px;
   border: 1px solid rgba(47, 156, 149, .3);
@@ -212,6 +230,8 @@ h2 {
   background: rgba(255, 255, 255, .82);
   box-shadow: 0 8px 24px rgba(31, 37, 37, .08);
   font-weight: 900;
+  line-height: 1.15;
+  text-wrap: balance;
   cursor: pointer;
 }
 
@@ -1173,8 +1193,8 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 
   .top-controls {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
   }
 
   .view-switch { flex-wrap: wrap; }
@@ -1226,6 +1246,21 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   .top-controls,
   .stage-switch,
   .control-dock {
+    width: 100%;
+  }
+
+  .top-controls {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "orientation"
+      "numbers"
+      "jump"
+      "stage";
+  }
+
+  .view-switch,
+  .numbers-button,
+  .final-stage-button {
     width: 100%;
   }
 
