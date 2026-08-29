@@ -879,7 +879,11 @@ h2 {
 
 @media (min-width: 881px) {
   .layout-vertical .app-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(420px, 520px);
+    width: min(100%, 1320px);
+    margin-inline: auto;
+    padding: 18px 20px 22px;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) minmax(390px, 440px);
     grid-template-rows: auto auto 1fr;
     align-items: start;
   }
@@ -895,9 +899,9 @@ h2 {
 
   .layout-vertical .landing-panel {
     display: grid;
-    grid-template-columns: minmax(190px, 240px) minmax(310px, 1fr);
+    grid-template-columns: minmax(175px, 210px) minmax(300px, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr);
-    min-height: min(72vh, 720px);
+    min-height: min(62vh, 620px);
   }
 
   .layout-vertical .landing-panel .panel-head {
@@ -954,7 +958,7 @@ h2 {
 
   .layout-vertical .block-controls {
     order: 3;
-    margin-top: 22px;
+    margin-top: 14px;
   }
 
   .layout-vertical .piece-tray {
@@ -970,7 +974,7 @@ h2 {
   }
 
   .layout-vertical .piece {
-    min-height: 142px;
+    min-height: 118px;
   }
 }
 
