@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="stylesheet" href="styles.css?v=stage-switch-default-14">
+    <link rel="stylesheet" href="styles.css?v=controls-near-blocks">
   </head>
   <body>
     <main class="app-shell">
@@ -140,15 +140,18 @@
       </section>
 
       <section class="control-dock" aria-label="Piece controls">
-        <div class="mode-switch" role="group" aria-label="Mode">
-          <button class="mode-button is-active" type="button" data-mode="add" title="Add">
-            <span aria-hidden="true">+</span>
-            <span class="sr-only">Add</span>
-          </button>
-          <button class="mode-button" type="button" data-mode="subtract" title="Subtract">
-            <span aria-hidden="true">-</span>
-            <span class="sr-only">Subtract</span>
-          </button>
+        <div class="block-controls">
+          <div class="mode-switch" role="group" aria-label="Mode">
+            <button class="mode-button is-active" type="button" data-mode="add" title="Add">
+              <span aria-hidden="true">+</span>
+              <span class="sr-only">Add</span>
+            </button>
+            <button class="mode-button" type="button" data-mode="subtract" title="Subtract">
+              <span aria-hidden="true">-</span>
+              <span class="sr-only">Subtract</span>
+            </button>
+          </div>
+          <button class="next-button" id="nextLevel" type="button" hidden>Next</button>
         </div>
         <div class="reflection-actions control-reflection-actions" id="reflectionActions" hidden>
           <button class="secondary-button" id="tryAnother" type="button" hidden>Find another route</button>
@@ -156,7 +159,6 @@
           <button class="secondary-button" id="preferSecond" type="button" hidden>Second route</button>
         </div>
         <div class="level-dock">
-          <button class="next-button" id="nextLevel" type="button" hidden>Next</button>
           <button class="icon-button" type="button" data-action="reset" title="Reset">
             <span aria-hidden="true">&#8634;</span>
             <span class="sr-only">Reset</span>
@@ -199,7 +201,7 @@
       </aside>
     </main>
 
-    <script src="app.js?v=stage-switch-default-14"></script>
+    <script src="app.js?v=controls-near-blocks"></script>
   </body>
 </html>
 
