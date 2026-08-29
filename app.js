@@ -554,8 +554,8 @@ function resetLandingAttempt(keepFirstRoute, newTarget) {
   levelTitle.textContent = level.title;
   levelCount.textContent = `${state.levelIndex + 1} / ${landingLevels.length}`;
   const shortcutStage = state.levelIndex >= landingLevels.length - 2 ? 1 : landingLevels.length;
-  jumpFinalStage.textContent = `Stage ${shortcutStage}`;
-  jumpFinalStage.setAttribute("aria-label", `Jump to stage ${shortcutStage}`);
+  jumpFinalStage.textContent = `Go to stage ${shortcutStage}`;
+  jumpFinalStage.setAttribute("aria-label", `Go to stage ${shortcutStage}`);
   numbersToggle.hidden = state.levelIndex !== landingLevels.length - 1;
   if (numbersToggle.hidden) state.showNumbers = true;
   numbersToggle.setAttribute("aria-pressed", String(state.showNumbers));
