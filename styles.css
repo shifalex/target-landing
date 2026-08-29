@@ -865,6 +865,19 @@ h2 {
 }
 
 @media (min-width: 881px) {
+  .layout-horizontal .app-shell {
+    width: min(100%, 1180px);
+    margin-inline: auto;
+    padding: 28px 32px 32px;
+    gap: 22px;
+  }
+
+  .layout-horizontal .piece-tray {
+    gap: 14px;
+  }
+}
+
+@media (min-width: 881px) {
   .layout-vertical .app-shell {
     grid-template-columns: minmax(0, 1fr) minmax(420px, 520px);
     grid-template-rows: auto auto 1fr;
