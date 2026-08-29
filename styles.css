@@ -249,7 +249,7 @@ h2 {
 .control-dock {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 10px;
   margin: -6px 0 -8px;
 }
@@ -257,7 +257,7 @@ h2 {
 .level-dock {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -1099,7 +1099,7 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   .view-switch { flex-wrap: wrap; }
 
   .control-dock {
-    justify-content: space-between;
+    justify-content: center;
   }
 
   .workbench {
@@ -1158,7 +1158,7 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 
   .level-dock {
-    justify-content: flex-end;
+    justify-content: center;
   }
 
   .mode-switch {
