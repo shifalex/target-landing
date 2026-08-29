@@ -203,6 +203,18 @@ h2 {
   background: var(--teal-deep);
 }
 
+.final-stage-button {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(47, 156, 149, .3);
+  border-radius: 8px;
+  color: var(--teal-deep);
+  background: rgba(255, 255, 255, .82);
+  box-shadow: 0 8px 24px rgba(31, 37, 37, .08);
+  font-weight: 900;
+  cursor: pointer;
+}
+
 .panel {
   min-width: 0;
   border: 1px solid rgba(96, 112, 108, .22);
@@ -676,6 +688,12 @@ h2 {
   background: #f8fbf8;
 }
 
+.level-dock .next-button {
+  min-height: 46px;
+  padding-inline: 18px;
+  box-shadow: 0 8px 20px rgba(30, 117, 111, .18);
+}
+
 .reflection-card.is-empty .reflection-kicker,
 .reflection-card.is-empty .reflection-text {
   visibility: hidden;
@@ -989,6 +1007,7 @@ h2 {
 .mode-button:focus-visible,
 .icon-button:focus-visible,
 .stage-button:focus-visible,
+.final-stage-button:focus-visible,
 .next-button:focus-visible,
 .secondary-button:focus-visible {
   outline: 3px solid rgba(238, 111, 87, .38);
@@ -1126,6 +1145,10 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   .top-controls,
   .stage-switch,
   .control-dock {
+    width: 100%;
+  }
+
+  .final-stage-button {
     width: 100%;
   }
 
