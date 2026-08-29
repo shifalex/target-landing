@@ -885,8 +885,19 @@ h2 {
 }
 
 @media (min-width: 881px) {
+  .layout-horizontal .control-dock {
+    position: relative;
+  }
+
+  .layout-horizontal .level-dock {
+    padding-right: 162px;
+  }
+
   .layout-horizontal .tray-level-controls {
-    transform: translateX(clamp(90px, 20vw, 260px));
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
   }
 
   body:has(.stage-button[data-stage="landing"].is-active) .app-shell {
