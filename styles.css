@@ -865,6 +865,10 @@ h2 {
 }
 
 @media (min-width: 881px) {
+  body:has(.stage-button[data-stage="landing"].is-active) .app-shell {
+    max-width: 1080px;
+  }
+
   .layout-horizontal .app-shell {
     width: min(100%, 1180px);
     margin-inline: auto;
