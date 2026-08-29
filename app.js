@@ -242,6 +242,7 @@ const targetNumber = document.querySelector("#targetNumber");
 const horizontalView = document.querySelector("#horizontalView");
 const verticalView = document.querySelector("#verticalView");
 const numbersToggle = document.querySelector("#numbersToggle");
+const jumpFinalStage = document.querySelector("#jumpFinalStage");
 const startLabel = document.querySelector("#startLabel");
 const targetLabel = document.querySelector("#targetLabel");
 const nextLevel = document.querySelector("#nextLevel");
@@ -270,6 +271,12 @@ numbersToggle.addEventListener("click", () => {
   renderNumbers();
   renderTrace();
   updatePieceAvailability();
+});
+
+jumpFinalStage.addEventListener("click", () => {
+  state.levelIndex = landingLevels.length - 1;
+  setStage("landing");
+  resetLandingLevel(true);
 });
 
 function setOrientation(orientation) {
