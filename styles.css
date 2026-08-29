@@ -885,6 +885,10 @@ h2 {
 }
 
 @media (min-width: 881px) {
+  .layout-horizontal .tray-level-controls {
+    transform: translateX(clamp(90px, 20vw, 260px));
+  }
+
   body:has(.stage-button[data-stage="landing"].is-active) .app-shell {
     width: min(100%, 1080px);
     max-width: 1080px;
