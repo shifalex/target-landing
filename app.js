@@ -1192,7 +1192,8 @@ function renderEquation() {
       <button class="equation-drag-handle" type="button" data-equation-drag aria-label="Drag to reorder term ${index + 1}">
         <span aria-hidden="true">&#8942;&#8942;</span>
       </button>
-      <span class="equation-operand"><b>${move.direction > 0 ? "+" : "−"}</b><strong>${formatNumber(move.value)}</strong></span>`;
+      <span class="equation-operand"><b>${move.direction > 0 ? "+" : "−"}</b><strong>${formatNumber(move.value)}</strong></span>
+      <button class="equation-remove-button" type="button" data-equation-action="remove" aria-label="Remove this term">&times;</button>`;
     equationTerms.append(term);
   });
 
