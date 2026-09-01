@@ -675,7 +675,7 @@ h2 {
 .layout-horizontal.is-equation-view .target-stage {
   width: 100%;
   height: calc(clamp(150px, 18vh, 180px) + 34px);
-  grid-template-rows: minmax(0, 40fr) minmax(0, 60fr);
+  grid-template-rows: minmax(0, 55fr) minmax(0, 45fr);
   align-items: stretch;
   gap: 6px;
 }
