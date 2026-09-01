@@ -1335,6 +1335,11 @@ h2 {
   gap: 10px;
 }
 
+.piece-small { order: 1; }
+.piece-large { order: 2; }
+.piece-tiny { order: 3; }
+.piece-huge { order: 4; }
+
 @media (min-width: 881px) {
   .layout-horizontal .control-dock {
     position: relative;
