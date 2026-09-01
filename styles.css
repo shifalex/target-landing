@@ -2076,7 +2076,7 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
 @media (max-width: 520px) {
   .is-equation-view.layout-vertical .target-stage {
     grid-template-columns: minmax(112px, .82fr) minmax(154px, 1.18fr);
-    min-height: clamp(460px, 66vh, 560px);
+    min-height: clamp(380px, 56vh, 450px);
     padding: 6px;
   }
 
@@ -2084,6 +2084,20 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     width: 88px;
     min-width: 88px;
     max-width: 88px;
+  }
+}
+
+@media (min-width: 521px) and (max-width: 639px) {
+  .layout-vertical .target-stage,
+  .is-equation-view.layout-vertical .target-stage {
+    min-height: clamp(400px, 56vh, 470px);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 820px) {
+  .layout-vertical .target-stage,
+  .is-equation-view.layout-vertical .target-stage {
+    min-height: clamp(430px, 58vh, 500px);
   }
 }
 
