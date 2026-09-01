@@ -763,7 +763,7 @@ h2 {
   justify-content: flex-start;
   gap: 3px;
   padding-left: 2px;
-  padding-right: 30px;
+  padding-right: 4px;
 }
 
 .equation-remove-button {
@@ -787,15 +787,15 @@ h2 {
 }
 
 .layout-horizontal.is-equation-view .equation-remove-button {
-  top: 4px;
-  right: 4px;
-  width: 32px;
-  height: 32px;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
   border: 1px solid rgba(164, 59, 49, .28);
-  border-radius: 50%;
+  border-radius: 6px;
   color: #9c2f27;
   background: #fff;
-  font-size: 1.15rem;
+  font-size: .9rem;
   box-shadow: 0 2px 7px rgba(31, 37, 37, .16);
 }
 
