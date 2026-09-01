@@ -684,6 +684,11 @@ h2 {
   height: 100%;
 }
 
+.layout-horizontal.is-equation-view .start-label {
+  top: 4px;
+  z-index: 5;
+}
+
 .layout-horizontal.is-equation-view .equation-simulator {
   width: min(100%, 760px);
   min-height: 0;
@@ -747,9 +752,17 @@ h2 {
   min-width: 66px;
   max-width: 66px;
   flex: 0 0 66px;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 34px;
   margin-bottom: 6px;
   padding: 3px 8px;
+}
+
+.layout-horizontal.is-equation-view .equation-operand {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 3px;
+  padding-left: 2px;
 }
 
 .layout-horizontal.is-equation-view .equation-drag-handle {
