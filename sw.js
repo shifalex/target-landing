@@ -1,9 +1,9 @@
-const CACHE_NAME = "target-landing-pwa-v30";
+const CACHE_NAME = "target-landing-pwa-v31";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=horizontal-equation-thin-v30",
-  "./app.js?v=horizontal-equation-thin-v30",
+  "./styles.css?v=horizontal-equation-width-v31",
+  "./app.js?v=horizontal-equation-width-v31",
   "./manifest.webmanifest",
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",

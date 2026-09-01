@@ -675,7 +675,7 @@ h2 {
 .layout-horizontal.is-equation-view .target-stage {
   width: 100%;
   height: calc(clamp(150px, 18vh, 180px) + 34px);
-  grid-template-rows: minmax(0, 60fr) minmax(0, 40fr);
+  grid-template-rows: minmax(0, 40fr) minmax(0, 60fr);
   align-items: stretch;
   gap: 6px;
 }
@@ -730,14 +730,8 @@ h2 {
 }
 
 .layout-horizontal.is-equation-view .equation-empty {
-  width: 100%;
+  width: 50%;
   margin-top: 0;
-  min-height: 22px;
-  padding: 3px 8px;
-}
-
-.layout-horizontal.is-equation-view .equation-empty:empty {
-  min-height: 22px;
 }
 
 .layout-horizontal.is-equation-view .equation-terms {
@@ -749,22 +743,22 @@ h2 {
 }
 
 .layout-horizontal.is-equation-view .equation-term {
-  width: 132px;
-  min-width: 132px;
-  max-width: 132px;
-  flex: 0 0 132px;
-  min-height: 22px;
-  margin-bottom: 3px;
-  padding: 1px 7px;
+  width: 66px;
+  min-width: 66px;
+  max-width: 66px;
+  flex: 0 0 66px;
+  min-height: 34px;
+  margin-bottom: 6px;
+  padding: 3px 8px;
 }
 
 .layout-horizontal.is-equation-view .equation-drag-handle {
   right: -8px;
   left: auto;
   top: auto;
-  bottom: -5px;
+  bottom: -8px;
   width: 26px;
-  height: 18px;
+  height: 28px;
   transform: none;
 }
 
