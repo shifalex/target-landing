@@ -505,6 +505,17 @@ h2 {
   text-align: center;
 }
 
+.equation-empty:empty { min-height: 42px; }
+
+.is-equation-view .landing-state,
+.is-equation-view .equation-status {
+  display: none;
+}
+
+.is-equation-view .equation-footer {
+  justify-content: center;
+}
+
 .equation-empty[hidden] { display: none; }
 
 .equation-terms {
