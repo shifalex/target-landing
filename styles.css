@@ -1512,7 +1512,8 @@ h2 {
   .layout-vertical .reflection-card {
     grid-column: 1;
     grid-row: 3;
-    min-height: 0;
+    min-height: 56px;
+    height: 56px;
     padding: 7px 12px;
     overflow: auto;
     border-right: 0;
@@ -1520,7 +1521,7 @@ h2 {
   }
 
   .layout-vertical .reflection-card.is-empty {
-    display: none;
+    display: block;
   }
 
   .layout-vertical .target-stage {
