@@ -1387,7 +1387,7 @@ h2 {
   }
 }
 
-@media (min-width: 700px) {
+@media (min-width: 640px) {
   .layout-vertical .app-shell {
     width: min(100%, 1320px);
     margin-inline: auto;
@@ -1727,7 +1727,7 @@ h2 {
 .layout-vertical .piece-large .piece-swatch { width: 30px; height: 84px; }
 .layout-vertical .piece-huge .piece-swatch { width: 30px; height: 104px; }
 
-@media (min-width: 700px) {
+@media (min-width: 640px) {
   body.layout-vertical .piece-tiny .piece-swatch { height: 24px; }
   body.layout-vertical .piece-small .piece-swatch { height: 34px; }
   body.layout-vertical .piece-large .piece-swatch { height: 58px; }
@@ -1818,7 +1818,7 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
-@media (min-width: 700px) and (max-width: 1180px) {
+@media (min-width: 640px) and (max-width: 1180px) {
   .layout-vertical .app-shell {
     width: min(100%, 1180px);
     margin-inline: auto;
@@ -1841,7 +1841,7 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
-@media (min-width: 521px) and (max-width: 699px) {
+@media (min-width: 521px) and (max-width: 639px) {
   .layout-vertical .control-dock {
     flex-direction: row;
     flex-wrap: nowrap;
@@ -1872,19 +1872,29 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
-@media (min-width: 700px) and (max-width: 820px) {
+@media (min-width: 640px) and (max-width: 820px) {
   .layout-vertical .control-dock {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    justify-items: center;
     gap: 6px;
     padding: 8px;
   }
 
+  .layout-vertical .level-dock,
   .layout-vertical .block-controls {
-    position: static;
-    width: 100%;
-    display: grid;
-    justify-items: center;
-    gap: 6px;
-    margin-top: 8px;
+    display: contents;
+  }
+
+  .layout-vertical .tray-level-controls {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .layout-vertical .level-dock > .icon-button {
+    grid-column: 2;
+    grid-row: 3;
   }
 
   .layout-vertical .block-controls .next-button,
@@ -1894,9 +1904,24 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     width: min(100%, 140px);
   }
 
-  .layout-vertical .block-controls .next-button { order: 1; }
-  .layout-vertical .block-controls .play-button { order: 2; }
-  .layout-vertical .block-controls .mode-switch { order: 3; }
+  .layout-vertical .block-controls .next-button {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .layout-vertical .block-controls .play-button {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .layout-vertical .block-controls .mode-switch {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+
+  .layout-vertical .control-reflection-actions {
+    grid-column: 1 / -1;
+  }
 
   .layout-vertical .piece-tray {
     grid-template-columns: minmax(0, 1fr);
