@@ -1817,6 +1817,37 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
+@media (min-width: 521px) and (max-width: 1180px) {
+  .layout-vertical .control-dock {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: -4px 0 -8px;
+  }
+
+  .layout-vertical .level-dock {
+    order: 1;
+  }
+
+  .layout-vertical .block-controls {
+    width: auto;
+    order: 2;
+    flex-direction: row;
+    margin-top: 0;
+  }
+
+  .layout-vertical .control-reflection-actions {
+    order: 3;
+    margin-top: 0;
+  }
+
+  .layout-vertical .mode-switch {
+    width: auto;
+  }
+}
+
 @media (max-width: 1180px) {
   .is-equation-view.layout-vertical .target-stage {
     width: 100%;
