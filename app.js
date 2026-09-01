@@ -586,6 +586,7 @@ function moveEquationTerm(from, to) {
 }
 
 function startEquationReorder(event) {
+  if (event.target.closest("[data-equation-action]")) return;
   const term = event.target.closest(".equation-term");
   if (!term || state.loading) return;
   const index = Number(term?.dataset.index);
