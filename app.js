@@ -271,6 +271,8 @@ const verticalView = document.querySelector("#verticalView");
 const representationSwitch = document.querySelector("#representationSwitch");
 const representationButtons = document.querySelectorAll("[data-representation]");
 const jumpFinalStage = document.querySelector("#jumpFinalStage");
+const settingsToggle = document.querySelector("#settingsToggle");
+const settingsPanel = document.querySelector("#settingsPanel");
 const startLabel = document.querySelector("#startLabel");
 const targetLabel = document.querySelector("#targetLabel");
 const nextLevel = document.querySelector("#nextLevel");
@@ -301,6 +303,16 @@ let suppressNextClick = false;
 
 horizontalView.addEventListener("click", () => setOrientation("horizontal"));
 verticalView.addEventListener("click", () => setOrientation("vertical"));
+settingsToggle.addEventListener("click", () => setSettingsOpen(settingsPanel.hidden));
+settingsPanel.addEventListener("click", (event) => {
+  if (event.target.closest("button")) setSettingsOpen(false);
+});
+document.addEventListener("pointerdown", (event) => {
+  if (!settingsPanel.hidden && !event.target.closest(".settings-menu")) setSettingsOpen(false);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setSettingsOpen(false);
+});
 representationButtons.forEach((button) => {
   button.addEventListener("click", () => setRepresentation(button.dataset.representation));
 });
@@ -314,6 +326,12 @@ jumpFinalStage.addEventListener("click", () => {
   setStage("landing");
   resetLandingLevel(true);
 });
+
+function setSettingsOpen(open) {
+  settingsPanel.hidden = !open;
+  settingsToggle.setAttribute("aria-expanded", String(open));
+  settingsToggle.setAttribute("aria-label", open ? "Close settings" : "Open settings");
+}
 
 function setOrientation(orientation) {
   if (orientation === state.orientation) return;

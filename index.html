@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="stylesheet" href="styles.css?v=level-15">
+    <link rel="stylesheet" href="styles.css?v=settings-v22">
   </head>
   <body class="layout-horizontal">
     <main class="app-shell">
@@ -22,7 +22,11 @@
           <p class="eyebrow">felt composition</p>
           <h1 id="stageTitle">Target Landing</h1>
         </div>
-        <div class="top-controls">
+        <div class="settings-menu">
+          <button class="settings-button" id="settingsToggle" type="button" aria-expanded="false" aria-controls="settingsPanel" aria-label="Open settings">
+            <span aria-hidden="true">&#9881;</span>
+          </button>
+          <div class="top-controls settings-panel" id="settingsPanel" hidden>
           <div class="view-switch" role="group" aria-label="Runway options">
             <button class="view-button is-active" id="horizontalView" type="button" aria-pressed="true">Horizontal</button>
             <button class="view-button" id="verticalView" type="button" aria-pressed="false">Vertical</button>
@@ -36,6 +40,7 @@
           <div class="stage-switch" role="tablist" aria-label="Stage">
             <button class="stage-button is-active" type="button" data-stage="landing" role="tab" aria-selected="true">Target landing</button>
             <button class="stage-button" type="button" data-stage="sculpt" role="tab" aria-selected="false" aria-hidden="true" disabled hidden>Area sculpting</button>
+          </div>
           </div>
         </div>
       </header>
@@ -234,6 +239,6 @@
       </aside>
     </main>
 
-    <script src="app.js?v=level-15"></script>
+    <script src="app.js?v=settings-v22"></script>
   </body>
 </html>
