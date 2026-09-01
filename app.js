@@ -190,7 +190,7 @@ const landingLevels = [
     randomTarget: {
       minOffset: -35,
       maxOffset: 35,
-      width: 2.5
+      width: 1
     },
     randomInventory: {
       min: 3,
@@ -203,13 +203,37 @@ const landingLevels = [
     numeric: true,
     note: "Random wide target. You get 3 to 5 pieces; combine or subtract them to land.",
     rule: "With 2, 5, 15, and 18 pieces, the same blocks can reach many places from -35 to +35."
+  },
+  {
+    title: "Continuing random challenge",
+    start: 50,
+    target: [50, 53],
+    randomTarget: {
+      minOffset: -35,
+      maxOffset: 35,
+      width: 1
+    },
+    randomInventory: {
+      min: 3,
+      max: 5,
+      keys: ["tiny", "small", "large", "huge"]
+    },
+    inventory: { small: 1, large: 1, tiny: 1 },
+    steps: { tiny: 2, small: 5, large: 15, huge: 18 },
+    stepScale: 1,
+    numeric: true,
+    sequential: true,
+    note: "Each new target continues from the course you already built.",
+    rule: "The course grows phase by phase; unavailable blocks stay visible but fade."
   }
 ];
+
+const defaultLandingLevelIndex = 13;
 
 const state = {
   stage: "landing",
   mode: "add",
-  levelIndex: landingLevels.length - 1,
+  levelIndex: defaultLandingLevelIndex,
   position: 8,
   moveCount: 0,
   loading: false,
@@ -223,7 +247,10 @@ const state = {
   sculptCoverage: 0,
   history: [],
   orientation: "horizontal",
-  showNumbers: true
+  representation: "numbers",
+  plannedHistory: [],
+  plannedPosition: 8,
+  simulatingEquation: false
 };
 
 const marker = document.querySelector("#marker");
@@ -241,7 +268,8 @@ const numberHud = document.querySelector("#numberHud");
 const targetNumber = document.querySelector("#targetNumber");
 const horizontalView = document.querySelector("#horizontalView");
 const verticalView = document.querySelector("#verticalView");
-const numbersToggle = document.querySelector("#numbersToggle");
+const representationSwitch = document.querySelector("#representationSwitch");
+const representationButtons = document.querySelectorAll("[data-representation]");
 const jumpFinalStage = document.querySelector("#jumpFinalStage");
 const startLabel = document.querySelector("#startLabel");
 const targetLabel = document.querySelector("#targetLabel");
@@ -253,6 +281,14 @@ const reflectionText = document.querySelector("#reflectionText");
 const tryAnother = document.querySelector("#tryAnother");
 const preferFirst = document.querySelector("#preferFirst");
 const preferSecond = document.querySelector("#preferSecond");
+const equationSimulator = document.querySelector("#equationSimulator");
+const equationTerms = document.querySelector("#equationTerms");
+const equationEmpty = document.querySelector("#equationEmpty");
+const equationTarget = document.querySelector("#equationTarget");
+const equationStatus = document.querySelector("#equationStatus");
+const sumCheck = document.querySelector("#sumCheck");
+const currentSum = document.querySelector("#currentSum");
+const playEquation = document.querySelector("#playEquation");
 const stageButtons = document.querySelectorAll(".stage-button");
 const stagePanels = document.querySelectorAll(".stage-panel");
 const areaSculptingEnabled = false;
@@ -260,21 +296,21 @@ const modeButtons = document.querySelectorAll(".mode-button");
 const pieceButtons = document.querySelectorAll(".piece");
 const dropZones = document.querySelectorAll(".drop-zone");
 let drag = null;
+let equationReorder = null;
 let suppressNextClick = false;
 
 horizontalView.addEventListener("click", () => setOrientation("horizontal"));
 verticalView.addEventListener("click", () => setOrientation("vertical"));
-numbersToggle.addEventListener("click", () => {
-  state.showNumbers = !state.showNumbers;
-  numbersToggle.setAttribute("aria-pressed", String(state.showNumbers));
-  numbersToggle.textContent = state.showNumbers ? "Numbers on" : "Numbers off";
-  renderNumbers();
-  renderTrace();
-  updatePieceAvailability();
+representationButtons.forEach((button) => {
+  button.addEventListener("click", () => setRepresentation(button.dataset.representation));
 });
+playEquation.addEventListener("click", simulateEquation);
+equationTerms.addEventListener("click", handleEquationAction);
+equationTerms.addEventListener("pointerdown", startEquationReorder);
+sumCheck.addEventListener("change", renderCurrentSum);
 
 jumpFinalStage.addEventListener("click", () => {
-  state.levelIndex = state.levelIndex >= landingLevels.length - 2 ? 0 : landingLevels.length - 1;
+  state.levelIndex = state.levelIndex >= defaultLandingLevelIndex ? 0 : defaultLandingLevelIndex;
   setStage("landing");
   resetLandingLevel(true);
 });
@@ -300,6 +336,26 @@ function setOrientation(orientation) {
   } else {
     updateLayout();
   }
+}
+
+function setRepresentation(representation) {
+  const level = landingLevels[state.levelIndex];
+  if (!level.numeric || representation === state.representation || state.loading) return;
+  state.representation = representation;
+  representationButtons.forEach((button) => {
+    const active = button.dataset.representation === representation;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  document.body.classList.toggle("is-equation-view", representation === "equation");
+  equationSimulator.hidden = representation !== "equation";
+  playEquation.hidden = representation !== "equation";
+  if (state.history.length || state.plannedHistory.length) {
+    resetLandingAttempt(false, false);
+    return;
+  }
+  render();
+  updatePieceAvailability();
 }
 
 modeButtons.forEach((button) => {
@@ -330,6 +386,11 @@ document.querySelectorAll("[data-level-step]").forEach((button) => {
 });
 
 nextLevel.addEventListener("click", () => {
+  if (landingLevels[state.levelIndex].sequential) {
+    advanceSequentialPhase();
+    return;
+  }
+
   if (landingLevels[state.levelIndex].randomTarget) {
     resetLandingLevel(true);
     return;
@@ -402,6 +463,12 @@ async function landPiece(key) {
   const level = landingLevels[state.levelIndex];
   let direction = state.mode === "subtract" ? -1 : 1;
   const moveValue = level.steps?.[key] || piece.step;
+
+  if (state.representation === "equation" && level.numeric) {
+    queueEquationPiece(key, piece, moveValue, direction);
+    return;
+  }
+
   let travel = moveValue * (level.stepScale || 1);
   const previous = state.position;
   const moveNumber = state.moveCount + 1;
@@ -437,6 +504,169 @@ async function landPiece(key) {
   previewLanding(state.position);
   render();
   checkLandingWin();
+  updatePieceAvailability();
+}
+
+function queueEquationPiece(key, piece, moveValue, direction) {
+  const level = landingLevels[state.levelIndex];
+  const previous = state.plannedPosition;
+  const destination = clamp(previous + moveValue * (level.stepScale || 1) * direction, 0, 100);
+  consumeLandingPiece(key);
+  state.plannedPosition = destination;
+  state.plannedHistory.push({
+    from: previous,
+    to: destination,
+    color: piece.color,
+    piece: key,
+    mode: direction > 0 ? "add" : "subtract",
+    value: moveValue,
+    direction
+  });
+  renderEquation();
+  renderMessages();
+  updatePieceAvailability();
+}
+
+function rebuildPlannedRoute() {
+  const level = landingLevels[state.levelIndex];
+  let position = level.start;
+  state.plannedHistory.forEach((move) => {
+    move.from = position;
+    move.to = clamp(position + move.value * (level.stepScale || 1) * move.direction, 0, 100);
+    position = move.to;
+  });
+  state.plannedPosition = position;
+}
+
+function handleEquationAction(event) {
+  const control = event.target.closest("[data-equation-action]");
+  if (!control || state.loading) return;
+  const term = control.closest(".equation-term");
+  const index = Number(term?.dataset.index);
+  if (!Number.isInteger(index)) return;
+
+  if (control.dataset.equationAction === "remove") {
+    const [removed] = state.plannedHistory.splice(index, 1);
+    if (removed) state.inventory[removed.piece] = (state.inventory[removed.piece] || 0) + 1;
+  } else {
+    const offset = control.dataset.equationAction === "up" ? -1 : 1;
+    moveEquationTerm(index, index + offset);
+  }
+
+  rebuildPlannedRoute();
+  renderEquation();
+  renderMessages();
+  updatePieceAvailability();
+}
+
+function moveEquationTerm(from, to) {
+  const boundedTo = clamp(to, 0, state.plannedHistory.length - 1);
+  if (from === boundedTo || from < 0 || from >= state.plannedHistory.length) return false;
+  const [move] = state.plannedHistory.splice(from, 1);
+  state.plannedHistory.splice(boundedTo, 0, move);
+  return true;
+}
+
+function startEquationReorder(event) {
+  const term = event.target.closest(".equation-term");
+  if (!term || state.loading) return;
+  const index = Number(term?.dataset.index);
+  if (!Number.isInteger(index)) return;
+  event.preventDefault();
+  const rect = term.getBoundingClientRect();
+  const ghost = term.cloneNode(true);
+  ghost.classList.remove("is-reordering");
+  ghost.classList.add("equation-drag-ghost");
+  ghost.setAttribute("aria-hidden", "true");
+  ghost.style.width = `${rect.width}px`;
+  ghost.style.height = `${rect.height}px`;
+  document.body.append(ghost);
+  equationReorder = {
+    index,
+    targetIndex: index,
+    pointerId: event.pointerId,
+    term,
+    ghost,
+    offsetX: event.clientX - rect.left,
+    offsetY: event.clientY - rect.top
+  };
+  term.classList.add("is-reordering", "is-placeholder");
+  if (term.setPointerCapture) term.setPointerCapture(event.pointerId);
+  term.style.pointerEvents = "none";
+  moveEquationReorder(event);
+  document.addEventListener("pointermove", moveEquationReorder);
+  document.addEventListener("pointerup", endEquationReorder, { once: true });
+  document.addEventListener("pointercancel", endEquationReorder, { once: true });
+}
+
+function moveEquationReorder(event) {
+  if (!equationReorder || event.pointerId !== equationReorder.pointerId) return;
+  equationReorder.ghost.style.left = `${event.clientX - equationReorder.offsetX}px`;
+  equationReorder.ghost.style.top = `${event.clientY - equationReorder.offsetY}px`;
+
+  const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".equation-term:not(.is-placeholder)");
+  if (!target || target.parentElement !== equationTerms) return;
+  const rect = target.getBoundingClientRect();
+  const placeAfter = state.orientation === "horizontal"
+    ? event.clientX > rect.left + rect.width / 2
+    : event.clientY > rect.top + rect.height / 2;
+  equationTerms.insertBefore(equationReorder.term, placeAfter ? target.nextSibling : target);
+  equationReorder.targetIndex = [...equationTerms.querySelectorAll(".equation-term")].indexOf(equationReorder.term);
+}
+
+function endEquationReorder(event) {
+  if (!equationReorder || (event.pointerId !== undefined && event.pointerId !== equationReorder.pointerId)) return;
+  const droppedInsideEquation = event.type !== "pointercancel"
+    && document.elementFromPoint(event.clientX, event.clientY)?.closest("#equationPath");
+  if (event.type === "pointerup" && !droppedInsideEquation) {
+    const [removed] = state.plannedHistory.splice(equationReorder.index, 1);
+    if (removed) state.inventory[removed.piece] = (state.inventory[removed.piece] || 0) + 1;
+    rebuildPlannedRoute();
+  } else if (event.type === "pointerup" && equationReorder.targetIndex !== equationReorder.index) {
+    moveEquationTerm(equationReorder.index, equationReorder.targetIndex);
+    rebuildPlannedRoute();
+  }
+  equationReorder.ghost.remove();
+  equationReorder.term.style.pointerEvents = "";
+  equationReorder.term.classList.remove("is-reordering", "is-placeholder");
+  equationReorder = null;
+  document.removeEventListener("pointermove", moveEquationReorder);
+  document.removeEventListener("pointerup", endEquationReorder);
+  document.removeEventListener("pointercancel", endEquationReorder);
+  renderEquation();
+  renderMessages();
+  updatePieceAvailability();
+}
+
+async function simulateEquation() {
+  if (!state.plannedHistory.length || state.loading || state.simulatingEquation) return;
+  const plan = state.plannedHistory.map((move) => ({ ...move }));
+  state.simulatingEquation = true;
+  state.loading = true;
+  playEquation.disabled = true;
+  equationStatus.textContent = "Building the course…";
+  equationSimulator.classList.add("is-simulating");
+  state.position = landingLevels[state.levelIndex].start;
+  state.history = [];
+  renderTrace();
+  setAxisPosition(marker, state.position);
+
+  for (let index = 0; index < plan.length; index += 1) {
+    const move = plan[index];
+    await runLoad(pieces[move.piece], index + 1, Math.min(1050, 520 + index * 120), move.from, move.to, move.direction);
+    state.position = move.to;
+    state.history.push(move);
+    state.moveCount = state.history.length;
+    renderTrace();
+  }
+
+  state.loading = false;
+  state.simulatingEquation = false;
+  playEquation.disabled = false;
+  equationSimulator.classList.remove("is-simulating");
+  render();
+  checkLandingWin();
+  equationStatus.textContent = isInLandingTarget(state.position) ? "Course complete — target reached." : "Course complete — adjust the equation and try again.";
   updatePieceAvailability();
 }
 
@@ -549,24 +779,34 @@ function resetLandingAttempt(keepFirstRoute, newTarget) {
   state.inventory = { ...level.inventory };
   state.lastLandingPiece = null;
   state.history = [];
+  state.plannedHistory = [];
+  state.plannedPosition = level.start;
+  state.simulatingEquation = false;
   nextLevel.hidden = true;
   hideReflection();
   levelTitle.textContent = level.title;
   levelCount.textContent = `${state.levelIndex + 1} / ${landingLevels.length}`;
-  const shortcutStage = state.levelIndex >= landingLevels.length - 2 ? 1 : landingLevels.length;
+  const shortcutStage = state.levelIndex >= defaultLandingLevelIndex ? 1 : defaultLandingLevelIndex + 1;
   jumpFinalStage.textContent = `Go to stage ${shortcutStage}`;
   jumpFinalStage.setAttribute("aria-label", `Go to stage ${shortcutStage}`);
-  numbersToggle.hidden = state.levelIndex !== landingLevels.length - 1;
-  if (numbersToggle.hidden) state.showNumbers = true;
-  numbersToggle.setAttribute("aria-pressed", String(state.showNumbers));
-  numbersToggle.textContent = state.showNumbers ? "Numbers on" : "Numbers off";
+  representationSwitch.hidden = !level.numeric;
+  if (!level.numeric) state.representation = "lengths";
+  if (level.numeric && !["lengths", "numbers", "equation"].includes(state.representation)) state.representation = "numbers";
+  representationButtons.forEach((button) => {
+    const active = button.dataset.representation === state.representation;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  document.body.classList.toggle("is-equation-view", level.numeric && state.representation === "equation");
+  equationSimulator.hidden = !level.numeric || state.representation !== "equation";
+  playEquation.hidden = !level.numeric || state.representation !== "equation";
   renderTargetBand();
   render();
   updateModeAvailability();
   updatePieceAvailability();
 }
 
-function prepareRandomChallenge(level) {
+function prepareRandomChallenge(level, origin = level.start) {
   if (!level.randomTarget) return;
 
   if (level.randomInventory) {
@@ -574,13 +814,43 @@ function prepareRandomChallenge(level) {
     level.randomTarget.offsets = reachableOffsets(level);
   }
 
-  const offsets = level.randomTarget.offsets || [];
+  const width = (level.randomTarget.width || 4) * (level.stepScale || 1);
+  const offsets = (level.randomTarget.offsets || []).filter((candidate) => {
+    const center = origin + candidate * (level.stepScale || 1);
+    return center >= width / 2 && center <= 100 - width / 2;
+  });
   if (!offsets.length) return;
   const scale = level.stepScale || 1;
   const offset = offsets[Math.floor(Math.random() * offsets.length)] * scale;
-  const width = (level.randomTarget.width || 4) * scale;
-  const center = clamp(level.start + offset, width / 2, 100 - width / 2);
+  const center = origin + offset;
   level.target = [center - width / 2, center + width / 2];
+}
+
+function advanceSequentialPhase() {
+  const level = landingLevels[state.levelIndex];
+  const origin = state.position;
+  prepareRandomChallenge(level, origin);
+  const primaryTarget = level.target;
+  target.start = primaryTarget[0];
+  target.end = primaryTarget[1];
+  target.center = (target.start + target.end) / 2;
+  state.mode = "add";
+  state.won = false;
+  state.loading = false;
+  state.loadToken += 1;
+  state.inventory = { ...level.inventory };
+  state.lastLandingPiece = null;
+  state.plannedPosition = state.position;
+  modeButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.mode === "add");
+  });
+  nextLevel.hidden = true;
+  hideReflection();
+  renderTargetBand();
+  render();
+  landingMessage.textContent = "new target; continue from the course already built";
+  updateModeAvailability();
+  updatePieceAvailability();
 }
 
 function buildRandomInventory(level) {
@@ -676,7 +946,7 @@ function showLandingSuccess() {
   const level = landingLevels[state.levelIndex];
   const signature = routeSignature();
   const showRule = !level.randomTarget;
-  const showEquation = Boolean(level.numeric);
+  const showEquation = Boolean(level.numeric && state.representation === "equation");
   reflectionCard.classList.toggle("is-empty", !(showRule || showEquation));
   reflectionKicker.textContent = showEquation ? "equation" : "rule";
   reflectionText.textContent = showEquation ? equationText(level) : showRule ? level.rule || "You landed inside the target band." : "";
@@ -855,6 +1125,7 @@ function render() {
   marker.classList.toggle("is-inside", isInLandingTarget(state.position));
   renderTrace();
   renderNumbers();
+  renderEquation();
   renderMessages();
 }
 
@@ -867,7 +1138,7 @@ function renderTrace() {
     step.className = `trace-step ${move.direction < 0 ? "backward" : "forward"} ${index === state.history.length - 1 ? "is-current" : ""}`;
     setBlockGeometry(step, move.from, move.to);
     step.style.background = move.color;
-    if (landingLevels[state.levelIndex].numeric && state.showNumbers) {
+    if (landingLevels[state.levelIndex].numeric && state.representation !== "lengths") {
       const label = document.createElement("span");
       label.className = "trace-label";
       label.textContent = formatSigned(move.value * move.direction);
@@ -879,10 +1150,49 @@ function renderTrace() {
 
 function renderNumbers() {
   const level = landingLevels[state.levelIndex];
-  numberHud.hidden = !level.numeric || !state.showNumbers;
+  numberHud.hidden = !level.numeric || state.representation !== "numbers";
   if (!level.numeric) return;
 
   targetNumber.textContent = formatSigned(targetOffset(level));
+}
+
+function renderEquation() {
+  const level = landingLevels[state.levelIndex];
+  if (!level.numeric) return;
+  equationTarget.textContent = formatSigned(targetOffset(level));
+  renderCurrentSum();
+  equationEmpty.hidden = state.plannedHistory.length > 0;
+  equationTerms.innerHTML = "";
+
+  state.plannedHistory.forEach((move, index) => {
+    const term = document.createElement("div");
+    term.className = "equation-term";
+    term.dataset.index = String(index);
+    term.style.setProperty("--term-color", move.color);
+    term.classList.toggle("is-reordering", equationReorder?.index === index);
+    term.innerHTML = `
+      <button class="equation-drag-handle" type="button" data-equation-drag aria-label="Drag to reorder term ${index + 1}">
+        <span aria-hidden="true">&#8942;&#8942;</span>
+      </button>
+      <span class="equation-operand"><b>${move.direction > 0 ? "+" : "−"}</b><strong>${formatNumber(move.value)}</strong></span>`;
+    equationTerms.append(term);
+  });
+
+  const onTarget = isInLandingTarget(state.plannedPosition);
+  if (!state.simulatingEquation) {
+    equationStatus.textContent = state.plannedHistory.length === 0
+      ? "Build a route to the target."
+      : onTarget
+        ? "Equation ready — press Play."
+        : "Keep building toward the target.";
+  }
+  playEquation.disabled = !state.plannedHistory.length || state.simulatingEquation;
+}
+
+function renderCurrentSum() {
+  const level = landingLevels[state.levelIndex];
+  currentSum.textContent = formatSigned(state.plannedPosition - level.start);
+  currentSum.hidden = !sumCheck.checked;
 }
 
 function renderMessages() {
@@ -896,7 +1206,11 @@ function renderMessages() {
     subtract: "pull left"
   };
 
-  if (state.loading) {
+  if (state.representation === "equation" && level.numeric && !state.simulatingEquation) {
+    landingMessage.textContent = state.plannedHistory.length
+      ? "equation updates as you add each piece"
+      : "choose + or −, then drag pieces into the equation";
+  } else if (state.loading) {
     landingMessage.textContent = "waiting for the piece to load";
   } else if (state.won) {
     landingMessage.textContent = level.randomTarget
@@ -940,7 +1254,7 @@ function updatePieceAvailability() {
       button.classList.toggle("is-unavailable", button.disabled && belongsToLevel);
       button.classList.toggle("is-not-in-level", !belongsToLevel);
       if (countBadge) countBadge.textContent = belongsToLevel ? String(count) : "no";
-      if (valueBadge) valueBadge.textContent = level.numeric && state.showNumbers && belongsToLevel ? formatNumber(level.steps?.[key] || pieces[key].step) : "";
+      if (valueBadge) valueBadge.textContent = level.numeric && state.representation !== "lengths" && belongsToLevel ? formatNumber(level.steps?.[key] || pieces[key].step) : "";
     } else {
       const belongsToSculpt = Object.prototype.hasOwnProperty.call(sculptPieces, key);
       button.hidden = !belongsToSculpt;
@@ -1062,8 +1376,9 @@ function dragVisualPiece(key) {
   const level = landingLevels[state.levelIndex];
   const moveValue = (level.steps?.[key] || pieces[key].step) * (level.stepScale || 1);
   const direction = state.mode === "subtract" ? -1 : 1;
-  const destination = clamp(state.position + moveValue * direction, 0, 100);
-  const span = Math.max(1.2, Math.abs(destination - state.position));
+  const currentPosition = state.representation === "equation" ? state.plannedPosition : state.position;
+  const destination = clamp(currentPosition + moveValue * direction, 0, 100);
+  const span = Math.max(1.2, Math.abs(destination - currentPosition));
 
   if (state.orientation === "vertical") {
     return {
@@ -1142,12 +1457,3 @@ function cancelDrag() {
   drag = null;
   dropZones.forEach((zone) => zone.classList.remove("is-hovered"));
 }
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {
-      // Browsers that block service workers still run the game normally.
-    });
-  });
-}
-

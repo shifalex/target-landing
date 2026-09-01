@@ -13,9 +13,9 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="stylesheet" href="styles.css?v=level-selector-edge">
+    <link rel="stylesheet" href="styles.css?v=level-15">
   </head>
-  <body>
+  <body class="layout-horizontal">
     <main class="app-shell">
       <header class="topbar">
         <div>
@@ -27,7 +27,11 @@
             <button class="view-button is-active" id="horizontalView" type="button" aria-pressed="true">Horizontal</button>
             <button class="view-button" id="verticalView" type="button" aria-pressed="false">Vertical</button>
           </div>
-          <button class="view-button numbers-button" id="numbersToggle" type="button" aria-pressed="true" hidden>Numbers on</button>
+          <div class="representation-switch" id="representationSwitch" role="group" aria-label="Representation" hidden>
+            <button class="representation-button" type="button" data-representation="lengths" aria-pressed="false">Lengths</button>
+            <button class="representation-button is-active" type="button" data-representation="numbers" aria-pressed="true">Numbers</button>
+            <button class="representation-button" type="button" data-representation="equation" aria-pressed="false">Equation</button>
+          </div>
           <button class="final-stage-button" id="jumpFinalStage" type="button" aria-label="Go to stage 1">Go to stage 1</button>
           <div class="stage-switch" role="tablist" aria-label="Stage">
             <button class="stage-button is-active" type="button" data-stage="landing" role="tab" aria-selected="true">Target landing</button>
@@ -78,6 +82,31 @@
                 <span></span>
               </div>
             </div>
+            <section class="equation-simulator" id="equationSimulator" aria-label="Equation builder" hidden>
+              <div class="equation-rail">
+                <div class="equation-anchor equation-source">
+                  <span>source</span>
+                  <strong>0</strong>
+                </div>
+                <div class="equation-path" id="equationPath">
+                  <div class="equation-empty" id="equationEmpty">Drag a piece here to grow the equation</div>
+                  <div class="equation-terms" id="equationTerms"></div>
+                </div>
+                <div class="equation-direction" aria-hidden="true">&#8595;</div>
+                <div class="equation-anchor equation-target">
+                  <span>target</span>
+                  <strong id="equationTarget">+0</strong>
+                </div>
+              </div>
+              <div class="equation-footer">
+                <p class="equation-status" id="equationStatus" aria-live="polite">Build a route to the target.</p>
+                <label class="sum-check">
+                  <input type="checkbox" id="sumCheck">
+                  <span>Check current sum</span>
+                  <strong id="currentSum" hidden>0</strong>
+                </label>
+              </div>
+            </section>
           </div>
 
         </article>
@@ -152,6 +181,10 @@
             </button>
           </div>
           <button class="next-button" id="nextLevel" type="button" hidden>Next</button>
+          <button class="play-button" id="playEquation" type="button" hidden aria-label="Play course simulation">
+            <span aria-hidden="true">&#9654;</span>
+            Play
+          </button>
         </div>
         <div class="reflection-actions control-reflection-actions" id="reflectionActions" hidden>
           <button class="secondary-button" id="tryAnother" type="button" hidden>Find another route</button>
@@ -201,7 +234,6 @@
       </aside>
     </main>
 
-    <script src="app.js?v=go-to-stage-label"></script>
+    <script src="app.js?v=level-15"></script>
   </body>
 </html>
-
