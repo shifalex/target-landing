@@ -674,7 +674,7 @@ h2 {
 
 .layout-horizontal.is-equation-view .target-stage {
   width: 100%;
-  height: calc(clamp(150px, 18vh, 180px) + 34px);
+  height: clamp(260px, 32vh, 320px);
   grid-template-rows: minmax(0, 55fr) minmax(0, 45fr);
   align-items: stretch;
   gap: 6px;
@@ -1374,20 +1374,56 @@ h2 {
 .piece-tiny { order: 3; }
 .piece-huge { order: 4; }
 
+@media (min-width: 521px) {
+  .layout-horizontal .control-dock {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    width: 100%;
+  }
+
+  .layout-horizontal .block-controls {
+    display: contents;
+  }
+
+  .layout-horizontal .mode-switch {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .layout-horizontal .next-button,
+  .layout-horizontal .play-button {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .layout-horizontal .control-reflection-actions {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: center;
+  }
+
+  .layout-horizontal .level-dock {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+}
+
 @media (min-width: 881px) {
   .layout-horizontal .control-dock {
     position: relative;
   }
 
   .layout-horizontal .level-dock {
-    padding-right: 162px;
+    padding-right: 0;
   }
 
   .layout-horizontal .tray-level-controls {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
+    position: static;
+    transform: none;
   }
 
   body.layout-horizontal:has(.stage-button[data-stage="landing"].is-active) .app-shell {
