@@ -1,9 +1,9 @@
-const CACHE_NAME = "target-landing-pwa-v38";
+const CACHE_NAME = "target-landing-pwa-v39";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=shorter-vertical-canvases-v38",
-  "./app.js?v=shorter-vertical-canvases-v38",
+  "./styles.css?v=tablet-next-cache-v39",
+  "./app.js?v=tablet-next-cache-v39",
   "./manifest.webmanifest",
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",
@@ -28,6 +28,17 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      }).catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => (

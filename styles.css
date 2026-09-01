@@ -1880,6 +1880,13 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
+@media (min-width: 821px) {
+  .layout-vertical .block-controls .next-button {
+    right: auto;
+    left: 0;
+  }
+}
+
 @media (min-width: 640px) and (max-width: 1180px) {
   .layout-vertical .app-shell {
     width: min(100%, 1180px);
