@@ -675,7 +675,7 @@ h2 {
 .layout-horizontal.is-equation-view .target-stage {
   width: 100%;
   height: calc(clamp(150px, 18vh, 180px) + 34px);
-  grid-template-rows: minmax(72px, 1fr) minmax(72px, 1fr);
+  grid-template-rows: minmax(0, 35fr) minmax(0, 65fr);
   align-items: stretch;
   gap: 6px;
 }
@@ -747,18 +747,18 @@ h2 {
   min-width: 132px;
   max-width: 132px;
   flex: 0 0 132px;
-  min-height: 44px;
-  margin-bottom: 10px;
-  padding: 5px 8px;
+  min-height: 34px;
+  margin-bottom: 6px;
+  padding: 3px 8px;
 }
 
 .layout-horizontal.is-equation-view .equation-drag-handle {
   right: -8px;
   left: auto;
   top: auto;
-  bottom: -10px;
+  bottom: -8px;
   width: 26px;
-  height: 34px;
+  height: 28px;
   transform: none;
 }
 
