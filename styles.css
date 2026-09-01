@@ -63,8 +63,8 @@ button {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-areas:
-    "orientation stage"
-    "numbers jump";
+    "orientation jump"
+    "numbers numbers";
   align-items: center;
   justify-content: end;
   gap: 8px;
@@ -1854,6 +1854,46 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
+@media (min-width: 700px) and (max-width: 820px) {
+  .layout-vertical .control-dock {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .layout-vertical .block-controls {
+    position: static;
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .layout-vertical .block-controls .next-button,
+  .layout-vertical .block-controls .play-button {
+    position: static;
+    right: auto;
+    width: min(100%, 140px);
+  }
+
+  .layout-vertical .block-controls .next-button { order: 1; }
+  .layout-vertical .block-controls .play-button { order: 2; }
+  .layout-vertical .block-controls .mode-switch { order: 3; }
+
+  .layout-vertical .piece-tray {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .layout-vertical .piece {
+    min-height: 68px;
+  }
+
+  .layout-vertical .piece-huge { order: 1; }
+  .layout-vertical .piece-large { order: 2; }
+  .layout-vertical .piece-small { order: 3; }
+  .layout-vertical .piece-tiny { order: 4; }
+}
+
 @media (max-width: 1180px) {
   .is-equation-view.layout-vertical .target-stage {
     width: 100%;
@@ -1954,7 +1994,6 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     right: 0;
   }
 
-  .stage-switch,
   .control-dock {
     width: 100%;
   }
@@ -1964,8 +2003,7 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     grid-template-areas:
       "orientation"
       "numbers"
-      "jump"
-      "stage";
+      "jump";
   }
 
   .view-switch,
