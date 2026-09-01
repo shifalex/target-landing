@@ -787,13 +787,13 @@ h2 {
 }
 
 .layout-horizontal.is-equation-view .equation-drag-handle {
-  right: 50%;
+  right: -12px;
   left: auto;
   top: auto;
   bottom: -8px;
   width: 26px;
   height: 28px;
-  transform: translateX(50%);
+  transform: none;
 }
 
 .layout-horizontal.is-equation-view .equation-term-actions button {
@@ -1377,7 +1377,7 @@ h2 {
 @media (min-width: 521px) {
   .layout-horizontal .control-dock {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
     align-items: center;
     width: 100%;
   }
@@ -1392,21 +1392,26 @@ h2 {
     justify-self: start;
   }
 
-  .layout-horizontal .next-button,
-  .layout-horizontal .play-button {
+  .layout-horizontal .next-button {
     grid-column: 2;
     grid-row: 1;
     justify-self: center;
   }
 
+  .layout-horizontal .play-button {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: center;
+  }
+
   .layout-horizontal .control-reflection-actions {
-    grid-column: 2;
+    grid-column: 2 / 4;
     grid-row: 2;
     justify-self: center;
   }
 
   .layout-horizontal .level-dock {
-    grid-column: 3;
+    grid-column: 4;
     grid-row: 1;
     justify-self: end;
   }
