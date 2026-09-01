@@ -748,12 +748,12 @@ h2 {
 }
 
 .layout-horizontal.is-equation-view .equation-term {
-  width: 84px;
-  min-width: 84px;
-  max-width: 84px;
-  flex: 0 0 84px;
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+  flex: 0 0 96px;
   grid-template-columns: minmax(0, 1fr);
-  min-height: 34px;
+  min-height: 46px;
   margin-bottom: 6px;
   padding: 3px 8px;
 }
@@ -763,7 +763,7 @@ h2 {
   justify-content: flex-start;
   gap: 3px;
   padding-left: 2px;
-  padding-right: 18px;
+  padding-right: 30px;
 }
 
 .equation-remove-button {
@@ -784,6 +784,25 @@ h2 {
   font-weight: 900;
   line-height: 1;
   cursor: pointer;
+}
+
+.layout-horizontal.is-equation-view .equation-remove-button {
+  top: 4px;
+  right: 4px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(164, 59, 49, .28);
+  border-radius: 50%;
+  color: #9c2f27;
+  background: #fff;
+  font-size: 1.15rem;
+  box-shadow: 0 2px 7px rgba(31, 37, 37, .16);
+}
+
+.layout-horizontal.is-equation-view .equation-remove-button:hover,
+.layout-horizontal.is-equation-view .equation-remove-button:focus-visible {
+  color: #fff;
+  background: #b7473d;
 }
 
 .layout-horizontal.is-equation-view .equation-drag-handle {
