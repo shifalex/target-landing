@@ -1806,6 +1806,94 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
+@media (max-width: 1180px) {
+  .is-equation-view.layout-vertical .target-stage {
+    width: 100%;
+    min-height: clamp(500px, 68vh, 640px);
+    grid-template-columns: minmax(130px, .9fr) minmax(170px, 1.1fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: stretch;
+    justify-items: stretch;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .is-equation-view.layout-vertical .target-stage.is-vertical .runway {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .is-equation-view.layout-vertical .equation-simulator {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    max-height: none;
+    padding: 7px 5px 6px;
+  }
+
+  .is-equation-view.layout-vertical .equation-rail {
+    width: 100%;
+  }
+
+  .is-equation-view.layout-vertical .equation-anchor {
+    min-width: 72px;
+    padding: 6px;
+  }
+
+  .is-equation-view.layout-vertical .equation-path {
+    padding-inline: 4px;
+  }
+
+  .is-equation-view.layout-vertical .equation-terms {
+    width: auto;
+    justify-items: center;
+    padding-left: 10px;
+  }
+
+  .is-equation-view.layout-vertical .equation-term {
+    width: 96px;
+    min-width: 96px;
+    max-width: 96px;
+    min-height: 42px;
+    padding: 5px 7px 5px 15px;
+  }
+
+  .is-equation-view.layout-vertical .equation-empty {
+    max-width: 100%;
+    padding-inline: 7px;
+    font-size: .74rem;
+  }
+
+  .is-equation-view.layout-vertical .equation-footer {
+    flex-direction: column;
+    gap: 3px;
+    font-size: .7rem;
+  }
+
+  .is-equation-view.layout-vertical .sum-check {
+    min-width: 0;
+    justify-content: center;
+    gap: 4px;
+    font-size: .66rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .is-equation-view.layout-vertical .target-stage {
+    grid-template-columns: minmax(112px, .82fr) minmax(154px, 1.18fr);
+    min-height: clamp(460px, 66vh, 560px);
+    padding: 6px;
+  }
+
+  .is-equation-view.layout-vertical .equation-term {
+    width: 88px;
+    min-width: 88px;
+    max-width: 88px;
+  }
+}
+
 @media (max-width: 520px) {
   .topbar {
     flex-direction: column;
