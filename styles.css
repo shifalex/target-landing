@@ -1351,7 +1351,7 @@ h2 {
     transform: translateY(-50%);
   }
 
-  body:has(.stage-button[data-stage="landing"].is-active) .app-shell {
+  body.layout-horizontal:has(.stage-button[data-stage="landing"].is-active) .app-shell {
     width: min(100%, 1080px);
     max-width: 1080px;
     margin-inline: auto;
@@ -1369,13 +1369,13 @@ h2 {
   }
 }
 
-@media (min-width: 1181px) {
+@media (min-width: 700px) {
   .layout-vertical .app-shell {
     width: min(100%, 1320px);
     margin-inline: auto;
-    padding: 18px 20px 22px;
-    gap: 12px;
-    grid-template-columns: minmax(0, 1fr) minmax(390px, 440px);
+    padding: 12px;
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) clamp(245px, 34vw, 440px);
     grid-template-rows: auto minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: start;
   }
@@ -1709,7 +1709,7 @@ h2 {
 .layout-vertical .piece-large .piece-swatch { width: 30px; height: 84px; }
 .layout-vertical .piece-huge .piece-swatch { width: 30px; height: 104px; }
 
-@media (min-width: 1181px) {
+@media (min-width: 700px) {
   body.layout-vertical .piece-tiny .piece-swatch { height: 24px; }
   body.layout-vertical .piece-small .piece-swatch { height: 34px; }
   body.layout-vertical .piece-large .piece-swatch { height: 58px; }
@@ -1800,11 +1800,11 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
   }
 }
 
-@media (min-width: 881px) and (max-width: 1180px) {
+@media (min-width: 700px) and (max-width: 1180px) {
   .layout-vertical .app-shell {
-    width: min(100%, 920px);
+    width: min(100%, 1180px);
     margin-inline: auto;
-    padding: 18px;
+    padding: 12px;
   }
 
   .layout-vertical .landing-panel { min-height: 0; }
@@ -1815,9 +1815,15 @@ body:has(.stage-button[data-stage="sculpt"].is-active) .piece-tiny .piece-swatch
     width: 100%;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .layout-vertical .piece {
+    min-height: 88px;
+    padding: 8px;
+    gap: 8px;
+  }
 }
 
-@media (min-width: 521px) and (max-width: 1180px) {
+@media (min-width: 521px) and (max-width: 699px) {
   .layout-vertical .control-dock {
     flex-direction: row;
     flex-wrap: nowrap;
